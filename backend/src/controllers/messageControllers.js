@@ -1,15 +1,82 @@
+import { Message } from "../models/Message.js";
 import { User } from "../models/User.js"
 
 export const fetchUsers = async(req, res)=>{
     try {
-        const users = await User.find({}).select("-password");
-
+        //fetch everyone except the current user, ne -> not equal
+        const users = await User.find({_id:{$ne: req.user._id}}).select("-password");
         return res.status(200).json({
             success:true,
             users,
         });
     } catch (error) {
         console.error("Error in fetchUsers: ", error);
+        return res.status(500).json({
+            success:false,
+            message: "Internal server error",
+        });
+    }
+}
+export const fetchMessages = async(req, res)=>{
+    try {
+        const senderId = req.user._id;
+        const receiverId = req.params.id;
+
+        const messages = await User.find({
+            $or:[
+                {senderId : senderId, receiverId: receiverId },
+                {senderId : receiverId, receiverId: senderId },
+            ]
+        });
+        
+        res.status(200).json({
+            success: true,
+            messages,
+        });
+    } catch (error) {
+        console.error("Error in fetchMessages: ", error);
+        return res.status(500).json({
+            success:false,
+            message: "Internal server error",
+        });
+    }
+}
+export const sendMessage = async(req, res)=>{
+    try {
+        const senderId = req.user._id;
+        const receiverId = req.params.id;
+        const {text, image} = req.body;
+
+        if (!text || text.trim() === "") {
+            return res.status(400).json({
+                success: false,
+                message: "Message text is required",
+            });
+        }
+
+        const isValidReceiver = await User.findById(receiverId).select("_id");
+        if(!isValidReceiver){
+            return res.status(400).json({ 
+                success: false,
+                message: "Receiver not found"
+            });
+        }
+        const message = new Message({
+            senderId,
+            receiverId,
+            text,
+            image,
+        });
+
+        await message.save();
+        return res.status(201).json({
+            success: true,
+            message,
+        })
+
+
+    } catch (error) {
+        console.error("Error in sendMessage: ", error);
         return res.status(500).json({
             success:false,
             message: "Internal server error",
