@@ -2,7 +2,7 @@ import bcryptjs from 'bcryptjs';
 
 import {User} from '../models/User.js' 
 import {generateTokenAndSetCookie} from '../utils/generateTokenAndSetCookie.js';
-import {cloudinary} from '../config/cloudinary.js';
+import cloudinary from '../config/cloudinary.js';
 
 export const signup = async(req, res)=>{
     try {
@@ -156,7 +156,11 @@ export const editProfile= async(req, res)=>{
 
 export const checkAuth = (req, res)=>{
     try {
-        return res.status(200).json(req.user);
+        const user = req.user;
+        return res.status(200).json({
+            success: true,
+            user:req.user,
+        });
     } catch (error) {
         console.error("Error in checkAuth route: ", error);
         return res.status(500).json({

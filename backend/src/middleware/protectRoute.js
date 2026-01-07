@@ -1,6 +1,6 @@
 import dotenv from 'dotenv/config.js';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 
 export const protectRoute = async(req, res, next)=>{
     try {
@@ -25,7 +25,7 @@ export const protectRoute = async(req, res, next)=>{
                 message: "User not found"
             })
         }
-        res.user = user;
+        req.user = user;
         next();
 
     } catch (error) {
