@@ -1,5 +1,6 @@
 import dotenv from 'dotenv/config.js';
 import jwt from 'jsonwebtoken';
+import { User } from '../models/User';
 
 export const protectRoute = async(req, res, next, userId)=>{
     try {
@@ -17,7 +18,14 @@ export const protectRoute = async(req, res, next, userId)=>{
                 message: "Unauthorized - Invalid/Expired Token"
             })
         }
-        req.userId = decode.userId
+        const user = await User.findById(decode.userId);
+        if(!user){
+            return res.status(404).json({
+                successs: false,
+                message: "User not found"
+            })
+        }
+        res.user = user;
         next();
         
     } catch (error) {
