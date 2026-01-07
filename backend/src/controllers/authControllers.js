@@ -102,6 +102,7 @@ export const login = async(req, res)=>{
         });
     }
 }
+
 export const logout = (req, res)=>{
     try {
         res.clearCookie("token");
@@ -115,5 +116,23 @@ export const logout = (req, res)=>{
             success: false,
             message: "Internal server error"
         });
+    }
+}
+
+export const editProfile= async(req, res)=>{
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById({userId});
+
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid token"
+            });
+        }
+        
+
+    } catch (error) {
+        
     }
 }
