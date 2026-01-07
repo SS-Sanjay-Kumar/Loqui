@@ -2,7 +2,7 @@ import dotenv from 'dotenv/config.js';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 
-export const protectRoute = async(req, res, next, userId)=>{
+export const protectRoute = async(req, res, next)=>{
     try {
         const token = req.cookies.token;
         if(!token){
@@ -18,7 +18,7 @@ export const protectRoute = async(req, res, next, userId)=>{
                 message: "Unauthorized - Invalid/Expired Token"
             })
         }
-        const user = await User.findById(decode.userId);
+        const user = await User.findById(decode.userId).select("-password");
         if(!user){
             return res.status(404).json({
                 successs: false,
@@ -27,7 +27,7 @@ export const protectRoute = async(req, res, next, userId)=>{
         }
         res.user = user;
         next();
-        
+
     } catch (error) {
         console.error("Error in protectRoute middleware: ", error)
         return res.status(500).json({

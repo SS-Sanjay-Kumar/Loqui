@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 
 import {User} from '../models/User.js' 
 import {generateTokenAndSetCookie} from '../utils/generateTokenAndSetCookie.js';
+import {cloudinary} from '../config/cloudinary.js';
 
 export const signup = async(req, res)=>{
     try {
@@ -121,18 +122,46 @@ export const logout = (req, res)=>{
 
 export const editProfile= async(req, res)=>{
     try {
-        const userId = req.params.userId;
-        const user = await User.findById({userId});
-
-        if(!user){
+        const {profilePic} = req.body;
+        if(!profilePic){
             return res.status(400).json({
                 success: false,
-                message: "Invalid token"
+                message: "Profile picture field is empty"
             });
         }
-        
+        const userId = req.user._id;
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        const user = await User.findByIdAndUpdate(
+            userId, 
+            { profilePic: uploadResponse.secure_url }, 
+            { new: true }
+        );
+
+        return res.status(200).json({
+            success: true,
+            user:{
+                ... user._doc,
+                password:undefined,
+            },
+        })
 
     } catch (error) {
-        
+        console.error("Error in editProfile route: ",error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        })
+    }
+}
+
+export const checkAuth = (req, res)=>{
+    try {
+        return res.status(200).json(req.user);
+    } catch (error) {
+        console.error("Error in checkAuth route: ", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
     }
 }

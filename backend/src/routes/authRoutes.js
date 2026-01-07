@@ -4,6 +4,7 @@ import {
     login,
     logout,
     editProfile,
+    checkAuth,
 } from '../controllers/authControllers.js'
 import {protectRoute} from '../middleware/protectRoute.js';
 
@@ -15,5 +16,7 @@ router.post("/login", login);
 router.post("/logout", logout);
 //put
 router.put("/edit-profile/:userId", protectRoute ,editProfile);
+// get
+router.get("/check-auth", protectRoute, checkAuth);
 
 export default router;
