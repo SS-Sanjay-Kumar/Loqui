@@ -12,7 +12,12 @@ export const signup = async(req, res)=>{
                 message: "All fields are mandatory",
             });
         }
-
+        if(password.length <6){
+            return res.status(400).json({
+                success: false,
+                message: "Password must be atleast 6 characters long",
+            })
+        }
         const userAlreadyExists = await User.findOne({email});
         
         if(userAlreadyExists){
@@ -22,26 +27,28 @@ export const signup = async(req, res)=>{
             })
         }
         const hashedPassword = await bcryptjs.hash(password, 10); 
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
         const user = new User({
             name,
             email,
             password:hashedPassword,
-            verificationCode,
-            verificationCodeExpiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24hours
         })
 
-        await user.save();
-        generateTokenAndSetCookie(res, user._id);
+        if(user){
+            generateTokenAndSetCookie(res, user._id);
+            await user.save();
 
+        }else{
+            return res.status(500).json({
+                success: false,
+                message: "Error creating user"
+            });
+        }
+        
         return res.status(201).json({
             success: true,
             user:{
                 ... user._doc,
                 password:undefined,
-                verificationCode: undefined,
-                verificationCodeExpiresAt: undefined,
             }
         });
 
@@ -49,7 +56,7 @@ export const signup = async(req, res)=>{
         console.error("Error in signup route:", error);
         return res.status(500).json({
             success: false,
-            message: "Error during signup"
+            message: "Internal server error"
         });
     }
 }
@@ -62,7 +69,7 @@ export const login = async(req, res)=>{
         if(!user){
             return res.status(400).json({
                 success: false,
-                message: "User not found, try signing in"
+                message: "User not found"
             });
         }
 
@@ -84,8 +91,6 @@ export const login = async(req, res)=>{
             user:{
                 ... user._doc,
                 password:undefined,
-                verificationCode: undefined,
-                verificationCodeExpiresAt: undefined,
             }
         });
 
@@ -93,14 +98,22 @@ export const login = async(req, res)=>{
         console.error("Error in login: ", error)
         return res.status(500).json({
             success: false,
-            message: "Error during login"
+            message: "Internal server error"
         });
     }
 }
 export const logout = (req, res)=>{
-    res.clearCookie("token");
-    return res.status(200).json({
-        success: true,
-        message: "Logout successful"
-    });
+    try {
+        res.clearCookie("token");
+        return res.status(200).json({
+            success: true,
+            message: "Logout successful"
+        });
+    } catch (error) {
+        console.error("Error in logout route: " ,error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
 }
