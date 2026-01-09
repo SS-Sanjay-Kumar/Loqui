@@ -1,3 +1,5 @@
+import { v2 as cloudinary } from 'cloudinary';
+
 import { Message } from "../models/Message.js";
 import { User } from "../models/User.js"
 
@@ -46,6 +48,12 @@ export const sendMessage = async(req, res)=>{
         const senderId = req.user._id;
         const receiverId = req.params.id;
         const {text, image} = req.body;
+        
+        let imageUrl;
+        if(image){
+            const uploadedImage = cloudinary.uploader.upload(image)
+            imageUrl = uploadedImage.secure_url;
+        }
 
         if (!text || text.trim() === "") {
             return res.status(400).json({
@@ -65,7 +73,7 @@ export const sendMessage = async(req, res)=>{
             senderId,
             receiverId,
             text,
-            image,
+            image: imageUrl,
         });
 
         await message.save();
@@ -73,7 +81,7 @@ export const sendMessage = async(req, res)=>{
             success: true,
             message,
         })
-
+        // todo: realtime functionality  - socket.io
 
     } catch (error) {
         console.error("Error in sendMessage: ", error);
