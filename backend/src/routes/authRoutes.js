@@ -6,16 +6,16 @@ import {
     editProfile,
     checkAuth,
 } from '../controllers/authControllers.js'
-import {protectRoute} from '../middleware/protectRoute.js';
+import { protectRoute } from '../middleware/protectRoute.js';
 
 // -> /api/auth
-const router  = express.Router();
+const router = express.Router();
 
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 //put
-router.put("/edit-profile/:userId", protectRoute ,editProfile);
+router.put("/edit-profile", protectRoute, editProfile);
 // get
 router.get("/check-auth", protectRoute, checkAuth);
 
