@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import cloudinary from '../config/cloudinary.js';
 
 import { Message } from "../models/Message.js";
 import { User } from "../models/User.js"
