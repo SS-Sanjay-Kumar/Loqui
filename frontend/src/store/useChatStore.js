@@ -34,15 +34,6 @@ export const useChatStore = create((set, get) => ({
             set({ isMessagesLoading: false });
         }
     },
-    sendMessage: async (messageData) => {
-        const { selectedUser, messages } = get();
-        try {
-            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-            set({ messages: [...messages, res.data] });
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-    },
 
     sendMessage: async (messageData) => {
         const { selectedUser, messages } = get();
@@ -60,12 +51,12 @@ export const useChatStore = create((set, get) => ({
 
         const socket = useAuthStore.getState().socket;
 
-        socket.on("newMessage", (newMessage) => {
-            const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+        socket.on("newMessage", (message) => {
+            const isMessageSentFromSelectedUser = message.senderId === selectedUser._id;
             if (!isMessageSentFromSelectedUser) return;
 
             set({
-                messages: [...get().messages, newMessage],
+                messages: [...get().messages, message],
             });
         });
     },

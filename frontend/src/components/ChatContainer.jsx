@@ -48,11 +48,17 @@ const ChatContainer = () => {
             <ChatHeader />
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
+                {/* {messages.map((message) => (
                     <div
                         key={message._id}
                         className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
                         ref={messageEndRef}
+                    > */}
+                {messages.map((message, index) => (
+                    <div
+                        key={message._id || `${message.senderId}-${message.createdAt}-${index}`}
+                        ref={index === messages.length - 1 ? messageEndRef : null}
+                        className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
                     >
                         <div className=" chat-image avatar">
                             <div className="size-10 rounded-full border">
@@ -62,7 +68,6 @@ const ChatContainer = () => {
                                             ? authUser.profilePic || "/Default_pfp.jpg"
                                             : selectedUser.profilePic || "/Default_pfp.jpg"
                                     }
-                                    // /Users/sanjaykumar/Downloads/loqui/frontend/public/Default_pfp.jpg
                                     alt="profile pic"
                                 />
                             </div>

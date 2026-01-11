@@ -6,8 +6,9 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import connectDB from './config/db.js';
+import {app, server} from './config/socket.js';
 
-const app = express()
+
 const PORT = process.env.PORT || 5001
 
 //middlewares
@@ -23,7 +24,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running at ${PORT}`);
     connectDB();
 })
