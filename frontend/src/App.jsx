@@ -10,10 +10,15 @@ import LoginPage from './pages/LoginPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import { useAuthStore } from './store/useAuthStore';
+import { useThemeStore } from './store/useThemeStore';
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-
+  const { theme } = useThemeStore();
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+  
   useEffect(() => {
     checkAuth()
   }, [checkAuth]);
@@ -24,9 +29,10 @@ function App() {
       <Loader className="size-10 animate-spin" />
     </div>
   );
+  
 
   return (
-    <div data-theme="sunset">
+    <div data-theme={theme}>
       <Navbar />
 
       <Routes>
@@ -36,7 +42,7 @@ function App() {
         <Route path='/settings' element={< SettingsPage />} />
         <Route path='/profile' element={authUser ? < ProfilePage /> : < Navigate to="/login" />} />
       </Routes>
-      <Toaster/>
+      <Toaster />
     </div>
   )
 }
