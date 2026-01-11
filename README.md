@@ -46,7 +46,6 @@ Loqui supports real-time messaging, online user tracking, image sharing, and per
 
 ---
 
-## Project Structure
 
 ```text
 client/
@@ -104,6 +103,7 @@ server/
 * [ ] **Typing Indicators:** Real-time "User is typing..." feedback.
 * [ ] **Search:** Filter through conversations or message history.
 * [ ] **Group Chats:** Expand the architecture to support multiple participants.
+* [ ] **Invalidate JWT and authorization:** Implement proper logout instead of clearing cookies.
 
 ---
 
