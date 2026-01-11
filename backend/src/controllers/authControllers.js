@@ -1,55 +1,55 @@
 import bcryptjs from 'bcryptjs';
 
-import {User} from '../models/User.js' 
-import {generateTokenAndSetCookie} from '../utils/generateTokenAndSetCookie.js';
+import { User } from '../models/User.js'
+import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
 import cloudinary from '../config/cloudinary.js';
 
-export const signup = async(req, res)=>{
+export const signup = async (req, res) => {
     try {
-        const {name, email, password} = req.body;
-        if(!email || !password || !name){
+        const { name, email, password } = req.body;
+        if (!email || !password || !name) {
             return res.status(400).json({
                 sucess: false,
                 message: "All fields are mandatory",
             });
         }
-        if(password.length <6){
+        if (password.length < 6) {
             return res.status(400).json({
                 success: false,
                 message: "Password must be atleast 6 characters long",
             })
         }
-        const userAlreadyExists = await User.findOne({email});
-        
-        if(userAlreadyExists){
+        const userAlreadyExists = await User.findOne({ email });
+
+        if (userAlreadyExists) {
             return res.status(400).json({
                 success: false,
                 message: "User already exists, try logging in",
             })
         }
-        const hashedPassword = await bcryptjs.hash(password, 10); 
+        const hashedPassword = await bcryptjs.hash(password, 10);
         const user = new User({
             name,
             email,
-            password:hashedPassword,
+            password: hashedPassword,
         })
 
-        if(user){
+        if (user) {
             generateTokenAndSetCookie(res, user._id);
             await user.save();
 
-        }else{
+        } else {
             return res.status(500).json({
                 success: false,
                 message: "Error creating user"
             });
         }
-        
+
         return res.status(201).json({
             success: true,
-            user:{
-                ... user._doc,
-                password:undefined,
+            user: {
+                ...user._doc,
+                password: undefined,
             }
         });
 
@@ -62,12 +62,12 @@ export const signup = async(req, res)=>{
     }
 }
 
-export const login = async(req, res)=>{
+export const login = async (req, res) => {
     try {
-        const {email, password} = req.body;
-        const user = await User.findOne({email});
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
 
-        if(!user){
+        if (!user) {
             return res.status(400).json({
                 success: false,
                 message: "User not found"
@@ -76,22 +76,22 @@ export const login = async(req, res)=>{
 
         const isCorrectPassword = await bcryptjs.compare(password, user.password);
 
-        if(!isCorrectPassword){
+        if (!isCorrectPassword) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid credentials"
             });
         }
-        
+
         generateTokenAndSetCookie(res, user._id);
         user.lastLogin = Date.now();
         await user.save();
 
         return res.status(200).json({
             success: true,
-            user:{
-                ... user._doc,
-                password:undefined,
+            user: {
+                ...user._doc,
+                password: undefined,
             }
         });
 
@@ -104,7 +104,7 @@ export const login = async(req, res)=>{
     }
 }
 
-export const logout = (req, res)=>{
+export const logout = (req, res) => {
     try {
         res.clearCookie("token");
         return res.status(200).json({
@@ -112,7 +112,7 @@ export const logout = (req, res)=>{
             message: "Logout successful"
         });
     } catch (error) {
-        console.error("Error in logout route: " ,error);
+        console.error("Error in logout route: ", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -120,10 +120,10 @@ export const logout = (req, res)=>{
     }
 }
 
-export const editProfile= async(req, res)=>{
+export const editProfile = async (req, res) => {
     try {
-        const {profilePic} = req.body;
-        if(!profilePic){
+        const { profilePic } = req.body;
+        if (!profilePic) {
             return res.status(400).json({
                 success: false,
                 message: "Profile picture field is empty"
@@ -132,21 +132,21 @@ export const editProfile= async(req, res)=>{
         const userId = req.user._id;
         const uploadResponse = await cloudinary.uploader.upload(profilePic);
         const user = await User.findByIdAndUpdate(
-            userId, 
-            { profilePic: uploadResponse.secure_url }, 
+            userId,
+            { profilePic: uploadResponse.secure_url },
             { new: true }
         );
 
         return res.status(200).json({
             success: true,
-            user:{
-                ... user._doc,
-                password:undefined,
+            user: {
+                ...user._doc,
+                password: undefined,
             },
         })
 
     } catch (error) {
-        console.error("Error in editProfile route: ",error);
+        console.error("Error in editProfile route: ", error);
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
@@ -154,12 +154,18 @@ export const editProfile= async(req, res)=>{
     }
 }
 
-export const checkAuth = (req, res)=>{
+export const checkAuth = (req, res) => {
     try {
         const user = req.user;
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Not authenticated",
+            });
+        }
         return res.status(200).json({
             success: true,
-            user:req.user,
+            user: req.user,
         });
     } catch (error) {
         console.error("Error in checkAuth route: ", error);
