@@ -5,37 +5,37 @@ Loqui supports real-time messaging, online user tracking, image sharing, and per
 
 ---
 
-## 🚀 Features
+## Features
 
-### 🔐 Authentication & Authorization
+###  Authentication & Authorization
 - User signup and login with JWT-based authentication.
 - Secure cookies (`httpOnly`, `sameSite`) for session management.
 - Protected API routes to ensure data privacy.
 
-### 💬 Real-Time Messaging
+### Real-Time Messaging
 - **One-to-one private chats** with instant delivery via Socket.IO.
 - Real-time **online/offline status** tracking.
 - Smooth typing experience and instant UI updates.
 
-### 🖼️ Media Support
+### Media Support
 - Image message support powered by **Cloudinary**.
 - Image preview functionality before sending to ensure accuracy.
 
-### 🗄️ Persistent Storage
+### Persistent Storage
 - MongoDB as the source of truth for all chat history.
 - Messages are fetched dynamically upon conversation selection.
 
-### 🧠 State Management
+### State Management
 - Global state managed via **Zustand** for high performance.
 - Centralized handling of Socket connection lifecycles.
 
-### 🎨 UI / UX
+### UI / UX
 - Responsive design using **Tailwind CSS + DaisyUI**.
 - Skeleton loaders for a polished loading experience.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 | :--- | :--- |
@@ -46,7 +46,7 @@ Loqui supports real-time messaging, online user tracking, image sharing, and per
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 client/
@@ -68,7 +68,7 @@ server/
 
 ---
 
-## 🔄 Data Flow
+## Data Flow
 
 1. **Auth:** User logs in → JWT stored in secure cookie.
 2. **Connection:** Socket connection established using the unique User ID.
@@ -89,7 +89,7 @@ server/
 
 ---
 
-## 🧪 Known Limitations
+## Known Limitations
 
 * No unread message counters.
 * No pagination (large histories may slow down initial load).
@@ -97,7 +97,7 @@ server/
 
 ---
 
-## 🔮 Future Enhancements
+## Future Enhancements
 
 * [ ] **Read Receipts:** Add checkmarks (✓✓) for message status.
 * [ ] **Pagination:** Implement infinite scroll for older messages.
@@ -107,7 +107,7 @@ server/
 
 ---
 
-## 🧑‍💻 Learning Outcomes
+## Learning Outcomes
 
 * Implementing **WebSockets** for real-time bi-directional communication.
 * Managing complex global state with **Zustand**.
@@ -116,7 +116,7 @@ server/
 
 ---
 
-## 📜 License
+## License
 
 This project is for learning and educational purposes.
 
