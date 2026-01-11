@@ -46,27 +46,6 @@ Loqui supports real-time messaging, online user tracking, image sharing, and per
 
 ---
 
-
-```text
-client/
-├── src/
-│   ├── components/    # Reusable UI elements
-│   ├── store/         # Zustand stores (auth, chat)
-│   ├── pages/         # Page-level components
-│   ├── lib/           # Axios & Socket configurations
-│   └── main.jsx       # Entry point
-server/
-├── src/
-│   ├── controllers/   # Logic for routes
-│   ├── models/        # MongoDB schemas
-│   ├── routes/        # API endpoints
-│   ├── config/        # DB & Cloudinary config
-│   └── server.js      # Server entry & Socket logic
-
-```
-
----
-
 ## Data Flow
 
 1. **Auth:** User logs in → JWT stored in secure cookie.
